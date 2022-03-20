@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express";
-import { Socket } from "socket.io";
+import { NextFunction, Request, Response } from 'express';
+import { Socket } from 'socket.io';
 
 export type RESTHandler = {
   path: string;
@@ -19,10 +19,10 @@ export interface SocketHandler {
 }
 
 export enum RESTMethods {
-  GET = "get",
-  POST = "post",
-  PUT = "put",
-  DELETE = "delete",
+  GET = 'get',
+  POST = 'post',
+  PUT = 'put',
+  DELETE = 'delete',
 }
 export interface DisadusPublicUser {
   id: string;
@@ -68,7 +68,7 @@ export type Community = {
     primary: string;
     secondary: string;
   };
-  provider: "schoology";
+  provider: 'schoology';
   vanitybg?: string;
   verified?: boolean;
   plugins?: string[];

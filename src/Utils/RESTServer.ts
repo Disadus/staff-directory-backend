@@ -1,12 +1,12 @@
-import cors from "cors";
-import express from "express";
-import { readdirSync } from "fs";
-import { lstat, readdir } from "fs/promises";
-import { env } from "../../env";
-import { DisadusUser, RESTHandler } from "../../types/DisadusTypes";
-import SocketServer from "./SocketServer";
-import { API_DOMAIN } from "./constants";
-import nFetch from "./fetch";
+import cors from 'cors';
+import express from 'express';
+import { readdirSync } from 'fs';
+import { lstat, readdir } from 'fs/promises';
+import { env } from '../../env';
+import { DisadusUser, RESTHandler } from '../../types/DisadusTypes';
+import SocketServer from './SocketServer';
+import { API_DOMAIN } from './constants';
+import nFetch from './fetch';
 const importAllHandlers = async (path: string, server: express.Application) => {
   await Promise.all(
     (
@@ -16,7 +16,7 @@ const importAllHandlers = async (path: string, server: express.Application) => {
       if ((await lstat(`${path}/${file}`)).isDirectory()) {
         return importAllHandlers(`${path}/${file}`, server);
       }
-      if (!(file.endsWith(".ts") || file.endsWith(".js"))) {
+      if (!(file.endsWith('.ts') || file.endsWith('.js'))) {
         return;
       }
       import(`${path}/${file}`)
@@ -30,7 +30,7 @@ const importAllHandlers = async (path: string, server: express.Application) => {
           server[handler.method](handler.path, async (req, res, next) => {
             if (handler.sendUser) {
               if (!req.headers.authorization)
-                return res.status(401).send("Unauthorized");
+                return res.status(401).send('Unauthorized');
               user = await nFetch(`${API_DOMAIN}/user/@me`, {
                 headers: {
                   Authorization: req.headers.authorization,
@@ -52,10 +52,7 @@ export const RESTServer = (): express.Application => {
   server.use(express.json());
   server.use(express.urlencoded({ extended: true }));
   server.use(cors());
-  console.log(
-    "Importing REST Handlers",
-    readdirSync(`./src/RESTEndPoints`)
-  );
+  console.log('Importing REST Handlers', readdirSync(`./src/RESTEndPoints`));
   importAllHandlers(`${process.cwd()}/src/RESTEndPoints`, server);
   const socketServer = new SocketServer(server.listen(env.port || 443));
   return server;

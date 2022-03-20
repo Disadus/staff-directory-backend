@@ -11,6 +11,6 @@ console.log('Connecting to MongoDB...');
 MongoDB.connect().then(async () => {
   console.log('Connected to MongoDB');
   global.AuthManager = new PermissionsManager(MongoDB);
-  await global.AuthManager.setup()
+  await AuthManager.setup();
   const server = RESTServer();
 });

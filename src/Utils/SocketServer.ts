@@ -1,8 +1,8 @@
-import { Server, Socket, ServerOptions } from "socket.io";
-import https from "https";
-import { readdir } from "fs/promises";
-import { lstatSync } from "fs";
-import { SocketHandler } from "../../types/DisadusTypes";
+import { Server, Socket, ServerOptions } from 'socket.io';
+import https from 'https';
+import { readdir } from 'fs/promises';
+import { lstatSync } from 'fs';
+import { SocketHandler } from '../../types/DisadusTypes';
 export type WebRequest = {
   url: string;
   method: string;
@@ -18,13 +18,13 @@ export class SocketServer {
   constructor(httpsServer?: https.Server | Express.Application) {
     const options = {
       cors: {
-        origin: "*",
+        origin: '*',
       },
     } as Partial<ServerOptions>;
     this.socketServer = httpsServer
       ? new Server(httpsServer, options)
       : new Server(httpsServer, options);
-    this.socketServer.on("connection", (socket: Socket) => {
+    this.socketServer.on('connection', (socket: Socket) => {
       if (!socket.handshake.headers.authorization)
         return socket.disconnect(true);
       this.sockets.set(socket.id, socket);
@@ -36,7 +36,7 @@ export class SocketServer {
     });
     this.socketEvents = new Map();
     this.intializeSocketEvents();
-    console.log("Socket Server Initialized");
+    console.log('Socket Server Initialized');
     SocketServer.self = this;
   }
   async intializeSocketEvents() {
@@ -48,7 +48,7 @@ export class SocketServer {
           if (lstatSync(`${path}/${file}`).isDirectory()) {
             return addPath(`${path}/${file}`);
           }
-          if (!file.endsWith(".ts") && !file.endsWith(".js")) {
+          if (!file.endsWith('.ts') && !file.endsWith('.js')) {
             return;
           }
           import(`${path}/${file}`).then((module) => {
@@ -63,16 +63,16 @@ export class SocketServer {
       );
     };
     // await addPath(`${__dirname}/SocketHandlers`);
-    console.log("Socket Paths Initialized");
+    console.log('Socket Paths Initialized');
     this.ready = true;
   }
   attachPathsToSocket(socket: Socket) {
     console.log(
-      "Attaching Paths to Socket",
+      'Attaching Paths to Socket',
       Array.from(this.socketEvents.values()).map((x) => x.event)
     );
     socket.removeAllListeners();
-    socket.on("disconnect", () => {
+    socket.on('disconnect', () => {
       this.sockets.delete(socket.id);
       this.socketIdentities.delete(socket.id);
     });
@@ -80,7 +80,7 @@ export class SocketServer {
       socket.on(handler.event, (...data) => {
         handler.run(
           socket,
-          () => this.socketIdentities.get(socket.id) || "",
+          () => this.socketIdentities.get(socket.id) || '',
           ...data
         );
       });
