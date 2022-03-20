@@ -7,7 +7,7 @@ import {
 
 export const GetGame = {
   path: '/*/staffDirectory/*',
-  method: RESTMethods.POST,
+  method: RESTMethods.PUT,
   sendUser: false,
   run: async (req, res, next, user) => {
     const communityID = req.params[0];
@@ -70,7 +70,7 @@ export const GetGame = {
       !checkForPermission(
         user?.id,
         communityID,
-        `${STAFF_DIRECTORY_PERMISSION_SCOPE}.create`
+        `${STAFF_DIRECTORY_PERMISSION_SCOPE}.edit`
       )
     ) {
       return res.status(403).send('Unauthorized');
@@ -80,9 +80,13 @@ export const GetGame = {
       .listCollections({ name: communityID })
       .next(async (_, collinfo) => {
         if (collinfo) {
-          await MongoDB.db(STAFF_DIRECTORY_DATABASE)
+          const updatedInfo = await MongoDB.db(STAFF_DIRECTORY_DATABASE)
             .collection(communityID)
-            .insertOne(staffMember);
+            .updateOne({ id: staffMember.id }, staffMember);
+
+          if (updatedInfo.modifiedCount == 0) {
+            return res.status(404).send('Nothing Updated');
+          }
 
           return res.status(201).send(staffMember.id);
         } else {

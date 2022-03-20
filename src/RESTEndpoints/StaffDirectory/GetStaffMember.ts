@@ -23,7 +23,7 @@ export const GetGame = {
       }
       return res.status(400).send('Staff Member invalid');
     }
-    
+
     await MongoDB.db(STAFF_DIRECTORY_DATABASE)
       .listCollections({ name: communityID })
       .next(async (_, collinfo) => {
