@@ -6,7 +6,7 @@ import {
 } from '../../Utils/constants';
 
 export const GetGame = {
-  path: '/*/staffDirectory/*',
+  path: '/*/staffDirectory/member/*',
   method: RESTMethods.PUT,
   sendUser: false,
   run: async (req, res, next, user) => {

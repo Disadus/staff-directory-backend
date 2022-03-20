@@ -2,7 +2,7 @@ import { RESTMethods, RESTHandler } from '../../../types/DisadusTypes';
 import { STAFF_DIRECTORY_DATABASE } from '../../Utils/constants';
 
 export const GetGame = {
-  path: '/*/staffDirectory/*',
+  path: '/*/staffDirectory/member/*',
   method: RESTMethods.GET,
   sendUser: false,
   run: async (req, res, next, _) => {

@@ -1,4 +1,6 @@
-import { EVERYONE_PERMISSION_ID } from '../Utils/constants';
+import { Community } from '../../types/DisadusTypes';
+import { API_DOMAIN, EVERYONE_PERMISSION_ID } from '../Utils/constants';
+import nFetch from '../Utils/fetch';
 
 export const checkForPermission = async (
   user: string,
@@ -21,3 +23,15 @@ export const checkForPermission = async (
     ))
   );
 };
+
+export const isAdminOfCommunity = async (user: string, community: string): Promise<boolean | null> => {
+  const res = await nFetch(`${API_DOMAIN}/community/${community}/`);
+
+  if (res.status != 200) {
+    return null
+  }
+
+  const communityData = (await res.json()) as Community;
+
+  return communityData.admins.indexOf(user) != -1
+}
