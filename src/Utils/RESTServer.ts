@@ -1,15 +1,12 @@
 import cors from "cors";
 import express from "express";
-import { readdirSync, readFileSync } from "fs";
+import { readdirSync } from "fs";
 import { lstat, readdir } from "fs/promises";
 import { env } from "../../env";
-import { User, RESTHandler } from "../../types/DisadusTypes";
+import { DisadusUser, RESTHandler } from "../../types/DisadusTypes";
 import SocketServer from "./SocketServer";
 import { API_DOMAIN } from "./constants";
 import nFetch from "./fetch";
-import { getUserByID } from "../Helpers/UserAPIs";
-import { Encryptions } from "../Helpers/Encryptions";
-import https from "https";
 const importAllHandlers = async (path: string, server: express.Application) => {
   await Promise.all(
     (
@@ -29,21 +26,16 @@ const importAllHandlers = async (path: string, server: express.Application) => {
             return console.log(`${file} is not a REST handler`);
           }
           console.log(handler);
-          let user = null as User | null;
+          let user = null as DisadusUser | null;
           server[handler.method](handler.path, async (req, res, next) => {
             if (handler.sendUser) {
               if (!req.headers.authorization)
                 return res.status(401).send("Unauthorized");
-              const tokenInfo = await Encryptions.decrypt(
-                req.headers.authorization!
-              ).catch((er) => {});
-              if (tokenInfo) {
-                user = (await getUserByID(
-                  tokenInfo.data.userID!
-                )) as unknown as User;
-              } else {
-                return res.status(401).send("Unauthorized");
-              }
+              user = await nFetch(`${API_DOMAIN}/user/@me`, {
+                headers: {
+                  Authorization: req.headers.authorization,
+                },
+              }).then((response) => response.json() as Promise<DisadusUser>);
             }
             handler.run(req, res, next, user || undefined);
           });
@@ -62,27 +54,9 @@ export const RESTServer = (): express.Application => {
   server.use(cors());
   console.log(
     "Importing REST Handlers",
-    readdirSync(`${process.cwd()}/src/RESTEndpoints`)
+    readdirSync(`./src/RESTEndPoints`)
   );
-  importAllHandlers(`${process.cwd()}/src/RESTEndpoints`, server);
-  if (env?.webserver) {
-    const httpsServer = https.createServer(
-      {
-        //@ts-ignore
-        key: readFileSync(env.webserver?.keyPath),
-        //@ts-ignore
-        cert: readFileSync(env.webserver?.certPath),
-      },
-      server
-    );
-    new SocketServer(
-      httpsServer.listen(env.port, () => {
-        console.log(`Secure HTTP Server started on port ${env.port}`);
-      })
-    );
-  } else {
-    console.log(`HTTP Server running on port ${env.port}`);
-    new SocketServer(server.listen(env.port));
-  }
+  importAllHandlers(`${process.cwd()}/src/RESTEndPoints`, server);
+  const socketServer = new SocketServer(server.listen(env.port || 443));
   return server;
 };

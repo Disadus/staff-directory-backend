@@ -9,7 +9,7 @@ export type RESTHandler = {
     req: Request,
     res: Response,
     next: NextFunction,
-    user?: User
+    user?: DisadusUser
   ) => void | Promise<void>;
 };
 
@@ -24,13 +24,52 @@ export enum RESTMethods {
   PUT = "put",
   DELETE = "delete",
 }
-export type User = {
-  userID: string;
+export interface DisadusPublicUser {
+  id: string;
   username: string;
   email: string;
   firstName: string;
   lastName: string;
-  admin: boolean;
-  createdBy: "Disadus" | "Gunn.One" | "WATT" | "Standalone";
-  password: string;
+  bio: string;
+  pfp: string;
+  premiumUntil: number;
+  staffLevel: number;
+  tester: boolean;
+}
+
+export interface DisadusUser extends DisadusPublicUser {
+  communities: string[];
+  primaryCommunity: string;
+  community: {
+    [key: string]: {
+      courses: {
+        [key: string]: number;
+      };
+      schoology: boolean;
+    };
+  };
+  isAdmin: boolean;
+  theme: number;
+  devMode: boolean;
+  pluginMode: boolean;
+}
+export type Community = {
+  name: string;
+  description: string;
+  image: string;
+  id: string;
+  members: string[];
+  admins: string[];
+  memberIDs: string[];
+  adminIDs: string[];
+  creator: string;
+  createdAt: string;
+  colors: {
+    primary: string;
+    secondary: string;
+  };
+  provider: "schoology";
+  vanitybg?: string;
+  verified?: boolean;
+  plugins?: string[];
 };

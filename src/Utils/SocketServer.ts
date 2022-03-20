@@ -2,11 +2,7 @@ import { Server, Socket, ServerOptions } from "socket.io";
 import https from "https";
 import { readdir } from "fs/promises";
 import { lstatSync } from "fs";
-import { SocketHandler, User } from "../../types/DisadusTypes";
-import nFetch from "./fetch";
-import { API_DOMAIN } from "./constants";
-import { getUserByID } from "../Helpers/UserAPIs";
-import { Encryptions } from "../Helpers/Encryptions";
+import { SocketHandler } from "../../types/DisadusTypes";
 export type WebRequest = {
   url: string;
   method: string;
@@ -28,23 +24,14 @@ export class SocketServer {
     this.socketServer = httpsServer
       ? new Server(httpsServer, options)
       : new Server(httpsServer, options);
-    this.socketServer.on("connection", async (socket: Socket) => {
+    this.socketServer.on("connection", (socket: Socket) => {
       if (!socket.handshake.headers.authorization)
         return socket.disconnect(true);
       this.sockets.set(socket.id, socket);
-      const tokenInfo = await Encryptions.decrypt(
-        socket.handshake.headers.authorization!
-      ).catch((er) => {});
-      if (!tokenInfo || tokenInfo.data.appID) return socket.disconnect(true);
-      this.socketIdentities.set(socket.id, tokenInfo.data.userID!);
-      (async () => {
-        const userInfo = await getUserByID(tokenInfo.data.userID!);
-        if (userInfo) {
-          socket.join(`all`);
-          socket.join(`userID_${userInfo.userID}`);
-          socket.emit("userInfo", userInfo);
-        }
-      })();
+      this.socketIdentities.set(
+        socket.id,
+        socket.handshake.headers.authorization
+      );
       this.attachPathsToSocket(socket);
     });
     this.socketEvents = new Map();
