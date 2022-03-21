@@ -6,9 +6,10 @@
   "repository": "https://github.com/Disadus/disadus-mini-events-backend.git",
   "author": "John Li (Tet) <tet@tet.moe>",
   "license": "MIT",
+  
   "scripts": {
     "dev": "ts-node server.ts",
-    "start": "node server.js",
+    "start": "node ./output/server.js",
     "build": "tsc"
   },
   "devDependencies": {
