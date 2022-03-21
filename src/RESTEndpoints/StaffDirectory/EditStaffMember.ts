@@ -5,7 +5,7 @@ import {
   STAFF_DIRECTORY_PERMISSION_SCOPE,
 } from '../../Utils/constants';
 
-export const GetGame = {
+export const EditStaffMember = {
   path: '/*/staffDirectory/member/*',
   method: RESTMethods.PUT,
   sendUser: false,
@@ -96,4 +96,4 @@ export const GetGame = {
     return;
   },
 } as RESTHandler;
-export default GetGame;
+export default EditStaffMember;

@@ -2,7 +2,7 @@ import { RESTMethods, RESTHandler } from '../../../types/DisadusTypes';
 import { isAdminOfCommunity } from '../../Helpers/PermissionsChecker';
 import { STAFF_DIRECTORY_PERMISSION_SCOPE } from '../../Utils/constants';
 
-export const GetGame = {
+export const GiverUserPermission = {
   path: '/*/staffDirectory/permissions',
   method: RESTMethods.POST,
   sendUser: false,
@@ -60,4 +60,4 @@ export const GetGame = {
     return;
   },
 } as RESTHandler;
-export default GetGame;
+export default GiverUserPermission;

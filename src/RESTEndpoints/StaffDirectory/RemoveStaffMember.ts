@@ -5,7 +5,7 @@ import {
   STAFF_DIRECTORY_PERMISSION_SCOPE,
 } from '../../Utils/constants';
 
-export const GetGame = {
+export const RemoveStaffMember = {
   path: '/*/staffDirectory/member/*',
   method: RESTMethods.DELETE,
   sendUser: false,
@@ -62,4 +62,4 @@ export const GetGame = {
     return;
   },
 } as RESTHandler;
-export default GetGame;
+export default RemoveStaffMember;

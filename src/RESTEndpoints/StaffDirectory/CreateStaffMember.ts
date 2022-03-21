@@ -5,7 +5,7 @@ import {
   STAFF_DIRECTORY_PERMISSION_SCOPE,
 } from '../../Utils/constants';
 
-export const GetGame = {
+export const CreateStaffMember = {
   path: '/*/staffDirectory/member/*',
   method: RESTMethods.POST,
   sendUser: false,
@@ -79,17 +79,23 @@ export const GetGame = {
     await MongoDB.db(STAFF_DIRECTORY_DATABASE)
       .listCollections({ name: communityID })
       .next(async (_, collinfo) => {
-        if (collinfo) {
+        if (!collinfo) {
+          await MongoDB.db(STAFF_DIRECTORY_DATABASE).createCollection(
+            communityID
+          );
           await MongoDB.db(STAFF_DIRECTORY_DATABASE)
             .collection(communityID)
-            .insertOne(staffMember);
-
-          return res.status(201).send(staffMember.id);
-        } else {
-          return res.status(404).send('Staff list not found');
+            .createIndexes([{ key: { id: 'hashed' }, name: 'id' }]);
+        } else if (await globalThis.MongoDB.db(STAFF_DIRECTORY_DATABASE).collection(communityID).findOne({ id: staffID })) {
+          return res.status(409).send("Staff member already exists")
         }
+        await MongoDB.db(STAFF_DIRECTORY_DATABASE)
+          .collection(communityID)
+          .insertOne(staffMember);
+
+        return res.status(201).send(staffMember.id);
       });
     return;
   },
 } as RESTHandler;
-export default GetGame;
+export default CreateStaffMember;

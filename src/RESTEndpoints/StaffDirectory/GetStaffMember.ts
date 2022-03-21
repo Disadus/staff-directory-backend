@@ -1,7 +1,7 @@
 import { RESTMethods, RESTHandler } from '../../../types/DisadusTypes';
 import { STAFF_DIRECTORY_DATABASE } from '../../Utils/constants';
 
-export const GetGame = {
+export const GetStaffMember = {
   path: '/*/staffDirectory/member/*',
   method: RESTMethods.GET,
   sendUser: false,
@@ -43,4 +43,4 @@ export const GetGame = {
     return;
   },
 } as RESTHandler;
-export default GetGame;
+export default GetStaffMember;
