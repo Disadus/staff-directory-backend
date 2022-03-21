@@ -53,7 +53,7 @@ export const RESTServer = (): express.Application => {
   server.use(express.urlencoded({ extended: true }));
   server.use(cors());
   console.log('Importing REST Handlers');
-  importAllHandlers(`${__dirname}/../RESTEndPoints`, server);
+  importAllHandlers(`${__dirname}/../RESTEndpoints`, server);
   const socketServer = new SocketServer(server.listen(env.port || 443));
   return server;
 };
